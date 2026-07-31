@@ -1,0 +1,2006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campus Management Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  :root{
+    --navy:#1B2430;
+    --navy-2:#242F3E;
+    --paper:#F6F3EC;
+    --paper-dim:#EAE5D8;
+    --ink:#1B2430;
+    --amber:#E8A33D;
+    --red:#D6553B;
+    --green:#4C9F70;
+    --line: rgba(27,36,48,0.14);
+
+    /* Booking Portal Setup */
+    --primary: #003366;
+    --primary-light: #004080;
+    --primary-dark: #002244;
+    --secondary: #d99b26;
+    --accent: #00a8cc;
+    --bg-light: #f4f7fa;
+    --card-bg: #ffffff;
+    --text-main: #2b3674;
+    --text-muted: #707e94;
+    --border: #e2e8f0;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 10px 25px rgba(0,0,0,0.12);
+    --radius: 12px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    transition: var(--transition);
+  }
+  header{
+    background:var(--navy);
+    color:var(--paper);
+    padding:28px 24px 24px;
+    position: relative;
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--amber);
+    margin-bottom:8px;
+  }
+  h1{
+    font-family:'Zilla Slab',serif;
+    font-weight:700;
+    font-size:30px;
+    margin:0 0 6px;
+  }
+  header p{
+    margin:0;
+    color:#B9C2CE;
+    font-size:14px;
+    max-width:520px;
+    line-height:1.5;
+  }
+  .tabs{
+    display:flex;
+    gap:0;
+    margin-top:20px;
+    border:1px solid rgba(246,243,236,0.25);
+    border-radius:8px;
+    overflow:hidden;
+    width:fit-content;
+  }
+  .tab{
+    padding:9px 18px;
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+    color:#B9C2CE;
+    background:transparent;
+    border:none;
+    font-family:'Inter',sans-serif;
+  }
+  .tab.active{
+    background:var(--paper);
+    color:var(--navy);
+  }
+  main{
+    max-width:1100px;
+    margin:0 auto;
+    padding:24px 20px 60px;
+  }
+  .panel{
+    display:none;
+  }
+  .panel.active{display:block;}
+
+  /* CARD & INPUT PANELS */
+  .card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:20px;
+    margin-bottom:16px;
+  }
+  .card h2{
+    font-family:'Zilla Slab',serif;
+    font-size:18px;
+    margin:0 0 14px;
+  }
+  label{
+    display:block;
+    font-size:12px;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    color:#6B7280;
+    margin-bottom:5px;
+    margin-top:14px;
+  }
+  label:first-of-type{margin-top:0;}
+  input, select, textarea{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid var(--line);
+    border-radius:7px;
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    background:var(--paper);
+    color:var(--ink);
+  }
+  textarea{resize:vertical; min-height:70px;}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  button.submit{
+    margin-top:18px;
+    width:100%;
+    padding:12px;
+    background:var(--navy);
+    color:var(--paper);
+    border:none;
+    border-radius:7px;
+    font-weight:600;
+    font-size:14px;
+    cursor:pointer;
+  }
+  button.submit:hover{background:#2C3B4F;}
+
+  /* LIST FILTERS & BADGES */
+  .filters{
+    display:flex;
+    gap:8px;
+    margin-bottom:14px;
+    flex-wrap:wrap;
+  }
+  .filters button{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    padding:6px 12px;
+    border-radius:20px;
+    border:1px solid var(--line);
+    background:#fff;
+    cursor:pointer;
+    color:#555;
+  }
+  .filters button.active{
+    background:var(--navy);
+    color:var(--paper);
+    border-color:var(--navy);
+  }
+  .ticket{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:16px 18px;
+    margin-bottom:12px;
+    position:relative;
+  }
+  .ticket::before{
+    content:"";
+    position:absolute;
+    left:0; top:0; bottom:0;
+    width:4px;
+    border-radius:10px 0 0 10px;
+    background:var(--stripe, var(--amber));
+  }
+  .ticket-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:10px;
+  }
+  .ticket-id{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    color:#8A93A0;
+    letter-spacing:0.03em;
+  }
+  .ticket-title{
+    font-family:'Zilla Slab',serif;
+    font-weight:600;
+    font-size:16px;
+    margin:2px 0 6px;
+  }
+  .ticket-meta{
+    font-size:12px;
+    color:#6B7280;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:8px;
+  }
+  .ticket-desc{
+    font-size:13.5px;
+    color:#374151;
+    line-height:1.5;
+    margin-bottom:10px;
+  }
+  .status-pill{
+    display:inline-block;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    font-weight:700;
+    padding:4px 10px;
+    border-radius:20px;
+    text-transform:uppercase;
+    letter-spacing:0.03em;
+  }
+  .status-open{background:rgba(214,85,59,0.12); color:var(--red);}
+  .status-progress{background:rgba(232,163,61,0.16); color:#A96A1E;}
+  .status-resolved{background:rgba(76,159,112,0.14); color:var(--green);}
+
+  .ticket-actions{
+    display:flex;
+    gap:8px;
+    margin-top:10px;
+  }
+  .ticket-actions button{
+    font-size:12px;
+    padding:6px 10px;
+    border-radius:6px;
+    border:1px solid var(--line);
+    background:var(--paper);
+    cursor:pointer;
+    font-weight:600;
+  }
+  .ticket-actions button:hover{background:var(--paper-dim);}
+  .empty{
+    text-align:center;
+    padding:40px 20px;
+    color:#9CA3AF;
+    font-size:14px;
+  }
+  .note{
+    font-size:12px;
+    color:#9CA3AF;
+    margin-top:24px;
+    line-height:1.5;
+    border-top:1px solid var(--line);
+    padding-top:14px;
+  }
+
+  /* SYSTEM STYLES */
+  .theme-toggle{
+    display:flex;
+    gap:0;
+    margin-top:10px;
+    border:1px solid rgba(246,243,236,0.25);
+    border-radius:8px;
+    overflow:hidden;
+    width:fit-content;
+  }
+  .theme-toggle button{
+    padding:7px 14px;
+    font-size:12px;
+    font-weight:600;
+    cursor:pointer;
+    color:#B9C2CE;
+    background:transparent;
+    border:none;
+    font-family:'Inter',sans-serif;
+  }
+  .theme-toggle button.active{
+    background:var(--amber);
+    color:var(--navy);
+  }
+  .btn-row{
+    display:flex;
+    gap:10px;
+    margin-top:18px;
+  }
+  .btn-row button.submit{margin-top:0;}
+  button.clear-btn{
+    margin-top:18px;
+    padding:12px 18px;
+    background:transparent;
+    color:var(--ink);
+    border:1px solid var(--line);
+    border-radius:7px;
+    font-weight:600;
+    font-size:14px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  button.clear-btn:hover{background:var(--paper-dim);}
+
+  /* AUTHENTICATION VIEW */
+  #auth-screen{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:var(--navy);
+    padding:20px;
+  }
+  .auth-card{
+    background:var(--paper);
+    border-radius:12px;
+    padding:32px 28px;
+    width:100%;
+    max-width:380px;
+  }
+  .auth-card h1{
+    font-family:'Zilla Slab',serif;
+    font-size:22px;
+    margin:0 0 4px;
+  }
+  .auth-card p.sub{
+    margin:0 0 20px;
+    font-size:13px;
+    color:#6B7280;
+  }
+  .auth-toggle{
+    display:flex;
+    gap:0;
+    margin-bottom:18px;
+    border:1px solid var(--line);
+    border-radius:7px;
+    overflow:hidden;
+  }
+  .auth-toggle button{
+    flex:1;
+    padding:9px;
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+    color:#6B7280;
+    background:#fff;
+    border:none;
+  }
+  .auth-toggle button.active{
+    background:var(--navy);
+    color:var(--paper);
+  }
+  .auth-error{
+    background:rgba(214,85,59,0.1);
+    color:var(--red);
+    font-size:12.5px;
+    padding:9px 12px;
+    border-radius:6px;
+    margin-top:12px;
+    display:none;
+  }
+  .auth-error.show{display:block;}
+  #app-content{display:none;}
+  .logout-btn{
+    background:transparent;
+    border:1px solid rgba(246,243,236,0.3);
+    color:var(--paper);
+    font-size:12px;
+    font-weight:600;
+    padding:7px 14px;
+    border-radius:7px;
+    cursor:pointer;
+    margin-top:10px;
+  }
+  .user-badge{
+    font-size:12px;
+    color:#B9C2CE;
+    margin-top:14px;
+  }
+
+  /* RESOURCE BOOKING LAYOUT PATTERNS */
+  .hero-panel {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 60%, var(--accent) 100%);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-lg);
+  }
+  .hero-panel-content {
+    max-width: 650px;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-panel h2 {
+    font-family: 'Zilla Slab', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+    color: #fff;
+  }
+  .hero-panel p {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin: 0;
+    line-height: 1.5;
+    color: #e2e8f0;
+  }
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .stat-card {
+    background: #fff;
+    padding: 1.25rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+  }
+  .stat-card:hover {
+    transform: translateY(-2px);
+  }
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+  }
+  .stat-icon.blue { background: rgba(0, 51, 102, 0.1); color: var(--primary); }
+  .stat-icon.gold { background: rgba(217, 155, 38, 0.15); color: var(--secondary); }
+  .stat-icon.teal { background: rgba(0, 168, 204, 0.1); color: var(--accent); }
+  .stat-icon.green { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+
+  .stat-info h3 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin: 0;
+    color: var(--ink);
+  }
+  .stat-info p {
+    font-size: 0.8rem;
+    color: #6B7280;
+    margin: 0;
+  }
+  .section-title-booking {
+    font-family: 'Zilla Slab', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 1.5rem 0 1rem;
+    color: var(--ink);
+  }
+  .building-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+  .building-card {
+    background: #fff;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .building-header {
+    padding: 1rem 1.25rem;
+    background: linear-gradient(135deg, var(--primary-light), var(--primary));
+    color: white;
+  }
+  .building-header h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    color: #fff;
+  }
+  .building-body {
+    padding: 1rem 1.25rem;
+  }
+  .building-info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--line);
+    font-size: 0.85rem;
+  }
+  .building-info-item:last-child { border-bottom: none; }
+  .tag {
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+  .tag.weekday { background: rgba(245, 158, 11, 0.15); color: #d97706; }
+  .tag.weekend { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+
+  /* CANTEEN APP INTEGRATED MODULE ARCHITECTURE */
+  .canteen-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr 320px;
+    gap: 20px;
+    align-items: start;
+  }
+  @media (max-width: 992px) {
+    .canteen-layout { grid-template-columns: 1fr; }
+  }
+  .canteen-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .canteen-nav-btn {
+    padding: 12px 16px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: var(--transition);
+  }
+  .canteen-nav-btn:hover { background: var(--paper-dim); }
+  .canteen-nav-btn.active {
+    background: var(--navy);
+    color: #fff;
+    border-color: var(--navy);
+  }
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 14px;
+  }
+  .menu-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+  }
+  .menu-card-title {
+    font-family: 'Zilla Slab', serif;
+    font-weight: 700;
+    font-size: 15px;
+    margin: 0 0 4px 0;
+  }
+  .menu-card-price {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--amber);
+    margin-bottom: 12px;
+  }
+  .menu-card-type {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 14px;
+    height: 14px;
+    border: 1px solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 8px;
+  }
+  .menu-card-type.veg { border-color: var(--green); color: var(--green); }
+  .menu-card-type.nonveg { border-color: var(--red); color: var(--red); }
+  .menu-card-type::before {
+    content: '●';
+  }
+  .cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 13px;
+  }
+  .cart-qty-ctrl {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .cart-qty-ctrl button {
+    width: 22px;
+    height: 22px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* HOSTEL WORKFLOW SPECIFIC STYLES */
+  .hostel-role-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    background: var(--navy-2);
+    padding: 6px;
+    border-radius: 8px;
+    width: fit-content;
+  }
+  .hostel-role-btn {
+    padding: 6px 14px;
+    border: none;
+    background: transparent;
+    color: #B9C2CE;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+  }
+  .hostel-role-btn.active {
+    background: var(--amber);
+    color: var(--navy);
+  }
+  .hostel-sub-panel {
+    display: none;
+  }
+  .hostel-sub-panel.active {
+    display: block;
+  }
+  .notice-banner {
+    background: linear-gradient(135deg, #E8A33D, #F1C40F);
+    padding: 14px;
+    border-radius: 8px;
+    color: var(--navy);
+    margin-bottom: 20px;
+    font-weight: 500;
+    font-size: 13.5px;
+    box-shadow: var(--shadow-sm);
+  }
+  .data-item {
+    background: #fff;
+    border-left: 4px solid var(--stripe, var(--navy));
+    padding: 14px 16px;
+    border-top: 1px solid var(--line);
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 12px;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+  }
+  .data-meta {
+    font-size: 11px;
+    color: #6B7280;
+    margin-bottom: 4px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .data-title {
+    font-weight: 600;
+    font-size: 14.5px;
+    margin-bottom: 4px;
+  }
+  .status-badge {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .badge-warn { background: rgba(232,163,61,0.15); color: #A96A1E; }
+  .badge-success { background: rgba(76,159,112,0.15); color: var(--green); }
+  .badge-danger { background: rgba(214,85,59,0.15); color: var(--red); }
+  
+  .gate-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .gate-actions button {
+    font-size: 12px;
+    padding: 6px 12px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  /* DARK MODE PREFERENCES */
+  body.dark{
+    --paper:#151A21;
+    --paper-dim:#1E252E;
+    --ink:#E7E9ED;
+    --line: rgba(231,233,237,0.14);
+  }
+  body.dark header{
+    background:#0F1319;
+  }
+  body.dark .card,
+  body.dark .ticket,
+  body.dark .stat-card,
+  body.dark .building-card,
+  body.dark .canteen-nav-btn,
+  body.dark .menu-card,
+  body.dark .data-item{
+    background:#1B222B;
+    border-color:var(--line);
+  }
+  body.dark input,
+  body.dark select,
+  body.dark textarea{
+    background:#0F1319;
+    color:var(--ink);
+    border-color:var(--line);
+  }
+  body.dark .filters button{
+    background:#1B222B;
+    color:#B9C2CE;
+  }
+  body.dark button.clear-btn,
+  body.dark .cart-qty-ctrl button,
+  body.dark .gate-actions button{
+    color:var(--ink);
+    background:#1B222B;
+    border-color:var(--line);
+  }
+  body.dark .ticket-desc{color:#C4CAD3;}
+  body.dark .ticket-meta{color:#9CA6B4;}
+  body.dark .ticket-id{color:#7C8794;}
+  body.dark .stat-info h3{color:var(--ink);}
+  body.dark .canteen-nav-btn:hover { background: var(--paper-dim); }
+  body.dark .canteen-nav-btn.active { background: var(--amber); color: var(--navy); }
+  body.dark .data-meta { color: #9CA6B4; }
+</style>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <h1>Campus Unified Portal</h1>
+    <p class="sub">Sign in to file tracker reports or reserve infrastructure space.</p>
+    <div class="auth-toggle">
+      <button class="active" id="mode-signin" onclick="setAuthMode('signin')">Sign In</button>
+      <button id="mode-signup" onclick="setAuthMode('signup')">Sign Up</button>
+    </div>
+    <label>Email</label>
+    <input id="auth-email" type="email" placeholder="you@college.edu">
+    <label>Password</label>
+    <input id="auth-password" type="password" placeholder="At least 6 characters">
+    <button class="submit" id="auth-submit" onclick="handleAuth()" style="margin-top:18px;">Sign In</button>
+    <div class="auth-error" id="auth-error"></div>
+  </div>
+</div>
+
+<div id="app-content">
+<header>
+  <div class="eyebrow">Campus System Hub / Track 3</div>
+  <h1>Grievance, Maintenance & Resource Tracker</h1>
+  <p>Report campus structural bugs, reserve dynamic media facilities, manage hostel operations, and coordinate orders concurrently.</p>
+  <div class="tabs">
+    <button class="tab active" data-view="student">Student Tracker</button>
+    <button class="tab" data-view="booking">Resource Booking</button>
+    <button class="tab" data-view="canteen">Campus Canteens</button>
+    <button class="tab" data-view="hostel">Hostel & Visitors</button>
+    <button class="tab" data-view="staff" id="staff-tab-btn" style="display:none;">Staff / Admin</button>
+  </div>
+  <div class="theme-toggle" id="theme-toggle">
+    <button class="active" data-theme="light">☀ Light</button>
+    <button data-theme="dark">🌙 Dark</button>
+  </div>
+  <div class="user-badge" id="user-badge"></div>
+  <button class="logout-btn" onclick="handleLogout()">Log out</button>
+</header>
+
+<main>
+
+  <!-- STUDENT TRACKER MODULE -->
+  <div class="panel active" id="student">
+    <div class="card">
+      <h2>File a report</h2>
+      <label>Title</label>
+      <input id="f-title" placeholder="e.g. Broken tube light, Room B-204">
+
+      <div class="row2">
+        <div>
+          <label>Category</label>
+          <select id="f-category">
+            <option>Electrical</option>
+            <option>Water Leakage</option>
+            <option>Furniture</option>
+            <option>Wi-Fi / Internet</option>
+            <option>Cleanliness</option>
+            <option>Hostel</option>
+            <option>Classroom</option>
+            <option>Laboratory</option>
+            <option>Sports Facility</option>
+            <option value="Other">Other</option>
+          </select>
+          <input id="f-category-other" placeholder="Enter custom category" style="margin-top:8px; display:none;">
+        </div>
+        <div>
+          <label>Priority</label>
+          <select id="f-priority">
+            <option>Low</option>
+            <option selected>Normal</option>
+            <option>High</option>
+          </select>
+        </div>
+      </div>
+
+      <label>Location</label>
+      <select id="f-location">
+        <option value="">Select a location…</option>
+        <option>Girls Block 1</option>
+        <option>Girls Block 2</option>
+        <option>Boys Block 1</option>
+        <option>Boys Block 2</option>
+        <option>Boys Block 3</option>
+        <option>Boys Block 4</option>
+        <option>Boys Block 5</option>
+        <option>Boys Block 6</option>
+        <option>Boys Block 7</option>
+        <option>Boys Block 8</option>
+        <option>Academic Block 1</option>
+        <option>Academic Block 2</option>
+        <option>Architecture Block</option>
+        <option>Lab Complex</option>
+        <option>Special Block</option>
+        <option value="Other">Other</option>
+      </select>
+      <input id="f-location-other" placeholder="Enter custom location" style="margin-top:8px; display:none;">
+
+      <label>Description</label>
+      <textarea id="f-desc" placeholder="What's wrong, and since when?"></textarea>
+
+      <div class="btn-row">
+        <button class="submit" onclick="submitTicket()">Submit report</button>
+        <button class="clear-btn" onclick="clearForm()">Clear</button>
+      </div>
+    </div>
+
+    <div class="card" style="padding:16px 20px;">
+      <h2 style="margin-bottom:10px;">Track a ticket</h2>
+      <div class="btn-row" style="margin-top:0;">
+        <input id="f-track" placeholder="Enter ticket number, e.g. 201" style="flex:1;">
+        <button class="clear-btn" onclick="trackTicket()">Search</button>
+        <button class="clear-btn" onclick="clearTrack()">Show all</button>
+      </div>
+    </div>
+
+    <h2 style="font-family:'Zilla Slab',serif; font-size:16px; margin:20px 0 10px;">Your reports</h2>
+    <div id="student-list"></div>
+  </div>
+
+  <!-- COMPLETE INTEGRATED RESOURCE BOOKING MODULE -->
+  <div class="panel" id="booking">
+    <div class="hero-panel">
+      <div class="hero-panel-content">
+        <h2>Seamless Resource Allocation</h2>
+        <p>Book classrooms, auditoriums, and media equipment with real-time conflict detection and automated scheduling.</p>
+      </div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon blue"><i class="fas fa-door-open"></i></div>
+        <div class="stat-info">
+          <h3 id="stat-rooms-count">12</h3>
+          <p>Available Classrooms</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon gold"><i class="fas fa-building"></i></div>
+        <div class="stat-info">
+          <h3 id="stat-auditoriums-count">3</h3>
+          <p>Auditoriums Available</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon teal"><i class="fas fa-microchip"></i></div>
+        <div class="stat-info">
+          <h3 id="stat-equipment-count">8</h3>
+          <p>Lab Kits / Kits</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+        <div class="stat-info">
+          <h3 id="stat-active-bookings">0</h3>
+          <p>Active Cloud Bookings</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row2" style="grid-template-columns: 1fr 1fr; align-items: start; gap: 16px;">
+      <!-- Reservation Intake Form -->
+      <div class="card">
+        <h2>Reserve a Resource</h2>
+        
+        <label>Select Resource Category</label>
+        <select id="rb-type" onchange="updateResourceDropdown()">
+          <option value="Classroom">Classroom (AB-1 / AB-2)</option>
+          <option value="Auditorium">Auditorium</option>
+          <option value="Equipment">Media & Lab Equipment</option>
+        </select>
+
+        <label>Available Resource Items</label>
+        <select id="rb-item">
+          <!-- Populated dynamically via script -->
+        </select>
+
+        <div class="row2">
+          <div>
+            <label>Date</label>
+            <input type="date" id="rb-date">
+          </div>
+          <div>
+            <label>Time Slot</label>
+            <select id="rb-slot">
+              <option>Morning (09:00 AM - 12:30 PM)</option>
+              <option>Afternoon (01:30 PM - 05:00 PM)</option>
+              <option>Full Day Session</option>
+            </select>
+          </div>
+        </div>
+
+        <label>Purpose of Booking</label>
+        <textarea id="rb-purpose" placeholder="e.g., Guest Lecture / Project Testing / Hackathon preparation..."></textarea>
+
+        <button class="submit" onclick="submitReservation()">Request Allocation</button>
+      </div>
+
+      <!-- Cloud Registry Log Outputs -->
+      <div>
+        <div class="section-title-booking" style="margin-top:0;">Your Live Room Bookings</div>
+        <div id="booking-list"></div>
+      </div>
+    </div>
+
+    <div class="section-title-booking">Campus Blocks & Allocation Rules</div>
+    <div class="building-grid">
+      <div class="building-card">
+        <div class="building-header"><h3>Academic Block 1 (AB-1)</h3></div>
+        <div class="building-body">
+          <div class="building-info-item"><span>Auditoriums</span><strong>Auditorium 1, Mini Aud</strong></div>
+          <div class="building-info-item"><span>Floors</span><strong>5 Floors (G - 4th)</strong></div>
+          <div class="building-info-item"><span>Weekday Rule</span><span class="tag weekday">Max 3 Classrooms / Floor</span></div>
+          <div class="building-info-item"><span>Weekend Rule</span><span class="tag weekend">All Classrooms Open</span></div>
+        </div>
+      </div>
+
+      <div class="building-card">
+        <div class="building-header"><h3>Academic Block 2 (AB-2)</h3></div>
+        <div class="building-body">
+          <div class="building-info-item"><span>Auditoriums</span><strong>Auditorium 1, Auditorium 2</strong></div>
+          <div class="building-info-item"><span>Floors</span><strong>4 Floors (G - 3rd)</strong></div>
+          <div class="building-info-item"><span>Weekday Rule</span><span class="tag weekday">Max 2 Classrooms / Floor</span></div>
+          <div class="building-info-item"><span>Weekend Rule</span><span class="tag weekend">All Classrooms Open</span></div>
+        </div>
+      </div>
+
+      <div class="building-card">
+        <div class="building-header"><h3>Architecture Block</h3></div>
+        <div class="building-body">
+          <div class="building-info-item"><span>Auditoriums</span><strong>None</strong></div>
+          <div class="building-info-item"><span>Floors</span><strong>3 Floors (G - 2nd)</strong></div>
+          <div class="building-info-item"><span>Weekday Rule</span><span class="tag weekday">Max 1 Studio / Floor</span></div>
+          <div class="building-info-item"><span>Weekend Rule</span><span class="tag weekend">Studio Access Allowed</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DYNAMIC CAMPUS CANTEENS PANEL -->
+  <div class="panel" id="canteen">
+    <div class="hero-panel" style="background: linear-gradient(135deg, #4A0E4E 0%, #2A082C 60%, #E8A33D 100%);">
+      <div class="hero-panel-content">
+        <h2>Campus Dining Hub</h2>
+        <p>Browse live menus across all campus dining outlets and order ahead to skip kitchen wait queues.</p>
+      </div>
+    </div>
+
+    <div class="canteen-layout">
+      <!-- Left sidebar: Outlets -->
+      <div class="canteen-nav">
+        <button class="canteen-nav-btn active" onclick="switchCanteen('mayuri')"><i class="fas fa-utensils"></i> Mayuri Canteen</button>
+        <button class="canteen-nav-btn" onclick="switchCanteen('bistro')"><i class="fas fa-coffee"></i> Bistro</button>
+        <button class="canteen-nav-btn" onclick="switchCanteen('underbelly')"><i class="fas fa-hamburger"></i> Underbelly</button>
+        <button class="canteen-nav-btn" onclick="switchCanteen('ab_dakshin')"><i class="fas fa-bowl-rice"></i> AB Dakshin</button>
+      </div>
+
+      <!-- Center column: Menu items -->
+      <div>
+        <h2 id="canteen-title" style="font-family:'Zilla Slab',serif; font-size:22px; margin:0 0 14px 0;">Mayuri Menu</h2>
+        <div class="menu-grid" id="menu-container"></div>
+      </div>
+
+      <!-- Right column: Dynamic Cart -->
+      <div class="card" style="position: sticky; top: 20px;">
+        <h2 style="font-size:16px; border-bottom:1px solid var(--line); padding-bottom:8px; margin-bottom:8px;"><i class="fas fa-shopping-basket"></i> Token Cart</h2>
+        <div id="cart-container">
+          <div class="empty" style="padding:20px 0;">Cart is empty. Select tasty items!</div>
+        </div>
+        <div id="cart-summary" style="margin-top:12px; display:none;">
+          <div style="display:flex; justify-content:space-between; font-weight:700; font-size:15px; margin-bottom:12px;">
+            <span>Total Bill:</span>
+            <span id="cart-total">₹0</span>
+          </div>
+          <button class="submit" onclick="checkoutCart()">Generate Pre-Order Token</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEW SEPARATE TAB PANEL: HOSTEL MANAGEMENT & VISITOR WORKFLOW -->
+  <div class="panel" id="hostel">
+    <div id="hostel-notice-container"></div>
+
+    <div class="hostel-role-bar">
+      <button class="hostel-role-btn active" onclick="switchHostelRole('resident')"><i class="fas fa-user-graduate"></i> Resident</button>
+      <button class="hostel-role-btn" onclick="switchHostelRole('security')"><i class="fas fa-shield-alt"></i> Gate Security</button>
+      <button class="hostel-role-btn" onclick="switchHostelRole('warden')"><i class="fas fa-user-shield"></i> Warden Office</button>
+    </div>
+
+    <!-- HOSTEL RESIDENT SUB-PANEL -->
+    <div class="hostel-sub-panel active" id="hostel-resident">
+      <div class="row2" style="grid-template-columns: 1fr 1fr; align-items: start; gap: 16px;">
+        <div>
+          <div class="card">
+            <h2><i class="fas fa-tools"></i> Log Room Maintenance Issue</h2>
+            <label>Hostel Block & Room</label>
+            <input id="h-r-room" placeholder="e.g., Block B, Room 402">
+            
+            <label>Issue Category</label>
+            <select id="h-r-category">
+              <option>Electrical (Fan/Light/Socket)</option>
+              <option>Plumbing (Leakage/Tap/Toilet)</option>
+              <option>Carpentry (Door/Bed/Almirah)</option>
+              <option>Wi-Fi Access Issues</option>
+            </select>
+            
+            <label>Description</label>
+            <textarea id="h-r-desc" placeholder="Detail the structural problem or dysfunctionality..."></textarea>
+            
+            <button class="submit" onclick="submitHostelComplaint()">File Request</button>
+          </div>
+
+          <div class="card">
+            <h2><i class="fas fa-id-card"></i> Register Expected Visitor</h2>
+            <label>Visitor Full Name</label>
+            <input id="h-v-name" placeholder="Full Legal Name">
+            
+            <label>Relationship to Student</label>
+            <input id="h-v-rel" placeholder="e.g., Father, Local Guardian, Sibling">
+            
+            <label>Date of Arrival</label>
+            <input type="date" id="h-v-date">
+            
+            <button class="submit" style="background:var(--amber); color:var(--navy);" onclick="submitVisitorPass()">Issue Pre-Register Gate Pass</button>
+          </div>
+        </div>
+
+        <div>
+          <h2 style="font-family:'Zilla Slab',serif; font-size:16px; margin-bottom: 10px;"><i class="fas fa-history"></i> Your Logged Room Issues</h2>
+          <div id="hostel-issues-list"></div>
+
+          <h2 style="font-family:'Zilla Slab',serif; font-size:16px; margin: 20px 0 10px;"><i class="fas fa-door-open"></i> Your Active Visitor Passes</h2>
+          <div id="hostel-visitors-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOSTEL SECURITY SUB-PANEL -->
+    <div class="hostel-sub-panel" id="hostel-security">
+      <div class="card">
+        <h2><i class="fas fa-passport"></i> Gate Punch Registry (Real-Time Safety Checks)</h2>
+        <p style="font-size:13px; color:var(--text-muted); margin-top:-8px;">Privacy Protected: Guard views are limited strictly to visitor verification profiles.</p>
+        
+        <input id="h-gate-search" placeholder="Search expected guests by name..." style="margin-bottom: 16px;" oninput="renderSecurityGateView()">
+        <div id="hostel-security-gate-list"></div>
+      </div>
+    </div>
+
+    <!-- HOSTEL WARDEN SUB-PANEL -->
+    <div class="hostel-sub-panel" id="hostel-warden">
+      <div class="row2" style="grid-template-columns: 1fr 1fr; align-items: start; gap: 16px;">
+        <div>
+          <div class="card">
+            <h2><i class="fas fa-bullhorn"></i> Broadcast Master Urgent Notice</h2>
+            <label>Notice Headline</label>
+            <input id="h-n-title" placeholder="e.g., Main Gate Closure Extension">
+            
+            <label>Message Content</label>
+            <textarea id="h-n-msg" style="min-height:90px;" placeholder="Write explicit instructions for hostel inhabitants..."></textarea>
+            
+            <button class="submit" onclick="submitWardenNotice()">Publish to Notice Board</button>
+          </div>
+
+          <div class="card">
+            <h2><i class="fas fa-chart-pie"></i> In-House Safety Census</h2>
+            <div style="font-size:14px; line-height:1.8;">
+              <div>• Open Maintenance Overhead: <strong id="h-w-stat-complaints">0</strong> unresolved issues</div>
+              <div>• Active Guests Currently Inside: <strong id="h-w-stat-guests" style="color:var(--red);">0</strong> non-residents</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h2 style="font-family:'Zilla Slab',serif; font-size:16px; margin-bottom: 10px;"><i class="fas fa-tasks"></i> Operational Grievance Pipeline</h2>
+          <div id="hostel-warden-complaints-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAFF / ADMINISTRATIVE OPERATIONS -->
+  <div class="panel" id="staff">
+    <div class="filters" id="staff-filters">
+      <button data-f="all" class="active">All Reports</button>
+      <button data-f="Open">Open</button>
+      <button data-f="In Progress">In Progress</button>
+      <button data-f="Resolved">Resolved</button>
+    </div>
+    <div id="staff-list"></div>
+  </div>
+
+  <div class="note">
+    Connected to a live Supabase database — tickets and resource spaces are verified, tracked, and stored securely across user sessions.
+  </div>
+
+</main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ---- CONNECTIONS ----
+const SUPABASE_URL = "https://oekvgcwdlkteskeamiyt.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9la3ZnY3dkbGt0ZXNrZWFtaXl0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzOTQwOTYsImV4cCI6MjEwMDk3MDA5Nn0.Uw2QzqvManHY61gAa_kiN--mF5L2ZQ0DkMW2jrUvqJ0";
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let currentUser = null;
+let authMode = "signin";
+let tickets = [];
+let bookings = [];
+let localVisitorsCache = [];
+
+// Static items data mapping context
+const resourceCatalog = {
+  Classroom: ["AB1-101", "AB1-204", "AB2-105", "AB2-302", "LC-G02"],
+  Auditorium: ["Central Auditorium", "Mini Auditorium", "AB2 Block Hall"],
+  Equipment: ["Projector Kit B", "VR Dev Headset", "IoT Component Rack", "DSLR Media Box"]
+};
+
+const canteenMenus = {
+  mayuri: {
+    db_id: 1, 
+    name: "Mayuri Canteen",
+    items: [
+      { id: "m1", name: "Masala Dosa", price: 60, type: "veg" },
+      { id: "m2", name: "Paneer Butter Masala", price: 140, type: "veg" },
+      { id: "m3", name: "Butter Naan", price: 30, type: "veg" },
+      { id: "m4", name: "Chicken Biryani", price: 160, type: "nonveg" },
+      { id: "m5", name: "Veg Fried Rice", price: 80, type: "veg" }
+    ]
+  },
+  bistro: {
+    db_id: 2,
+    name: "Bistro Outlet",
+    items: [
+      { id: "b1", name: "Cold Coffee", price: 50, type: "veg" },
+      { id: "b2", name: "Grilled Cheese Sandwich", price: 70, type: "veg" },
+      { id: "b3", name: "Chocolate Muffin", price: 45, type: "veg" },
+      { id: "b4", name: "Chicken Burger", price: 90, type: "nonveg" }
+    ]
+  },
+  underbelly: {
+    db_id: 3,
+    name: "The Underbelly",
+    items: [
+      { id: "u1", name: "Peri Peri Fries", price: 80, type: "veg" },
+      { id: "u2", name: "Farmhouse Pizza (7\")", price: 180, type: "veg" },
+      { id: "u3", name: "Chicken Hakka Noodles", price: 110, type: "nonveg" },
+      { id: "u4", name: "Oreo Shake", price: 75, type: "veg" }
+    ]
+  },
+  ab_dakshin: {
+    db_id: 4,
+    name: "AB Dakshin",
+    items: [
+      { id: "d1", name: "Idli Sambar (2 Pcs)", price: 40, type: "veg" },
+      { id: "d2", name: "Medu Vada (2 Pcs)", price: 50, type: "veg" },
+      { id: "d3", name: "Onion Uttapam", price: 70, type: "veg" },
+      { id: "d4", name: "Filter Coffee", price: 20, type: "veg" }
+    ]
+  }
+};
+
+let currentCanteen = "mayuri";
+let shoppingCart = {};
+
+function updateResourceDropdown() {
+  const type = document.getElementById("rb-type").value;
+  const itemSelect = document.getElementById("rb-item");
+  itemSelect.innerHTML = resourceCatalog[type].map(item => `<option value="${item}">${item}</option>`).join("");
+}
+
+document.getElementById('rb-date').valueAsDate = new Date();
+
+function setAuthMode(mode){
+  authMode = mode;
+  document.getElementById('mode-signin').classList.toggle('active', mode==='signin');
+  document.getElementById('mode-signup').classList.toggle('active', mode==='signup');
+  document.getElementById('auth-submit').textContent = mode==='signin' ? "Sign In" : "Sign Up";
+  document.getElementById('auth-error').classList.remove('show');
+}
+
+async function handleAuth(){
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  const errorBox = document.getElementById('auth-error');
+  errorBox.classList.remove('show');
+
+  if(!email || !password){
+    errorBox.textContent = "Please enter both email and password.";
+    errorBox.classList.add('show');
+    return;
+  }
+
+  let result;
+  if(authMode === 'signin'){
+    result = await supabaseClient.auth.signInWithPassword({ email, password });
+  } else {
+    result = await supabaseClient.auth.signUp({ email, password });
+  }
+
+  if(result.error){
+    errorBox.textContent = result.error.message;
+    errorBox.classList.add('show');
+    return;
+  }
+
+  if(authMode === 'signup' && !result.data.session){
+    errorBox.textContent = "Account created — check your email to confirm, then sign in.";
+    errorBox.classList.add('show');
+    return;
+  }
+
+  await onLoggedIn(result.data.user);
+}
+
+async function handleLogout(){
+  await supabaseClient.auth.signOut();
+  currentUser = null;
+  document.getElementById('app-content').style.display = "none";
+  document.getElementById('auth-screen').style.display = "flex";
+  document.getElementById('auth-email').value = "";
+  document.getElementById('auth-password').value = "";
+}
+
+async function onLoggedIn(user){
+  currentUser = user;
+  document.getElementById('auth-screen').style.display = "none";
+  document.getElementById('app-content').style.display = "block";
+  document.getElementById('user-badge').textContent = "Signed in as " + user.email;
+
+  const { data: isStaff, error: staffCheckError } = await supabaseClient.rpc('is_staff');
+  if(staffCheckError){
+    console.error("Couldn't check staff status:", staffCheckError);
+  }
+
+  document.getElementById('staff-tab-btn').style.display = isStaff ? "inline-block" : "none";
+
+  updateResourceDropdown();
+  switchCanteen('mayuri');
+  await loadTickets();
+  await loadBookings();
+  await syncHostelPipeline();
+}
+
+async function checkExistingSession(){
+  const { data } = await supabaseClient.auth.getSession();
+  if(data.session){
+    await onLoggedIn(data.session.user);
+  }
+}
+
+// ---- BOOKING ENGINE OPERATIONS ----
+async function loadBookings() {
+  const { data, error } = await supabaseClient
+    .from('BOOKING')
+    .select('*')
+    .order('booking_date', { ascending: true });
+
+  if (error) {
+    console.error("Error pulling bookings array:", error);
+    return;
+  }
+  bookings = data;
+  renderBookings();
+}
+
+async function submitReservation() {
+  const resource_type = document.getElementById("rb-type").value;
+  const resource_name = document.getElementById("rb-item").value;
+  const booking_date = document.getElementById("rb-date").value;
+  const slot = document.getElementById("rb-slot").value;
+  const purpose = document.getElementById("rb-purpose").value.trim();
+
+  if(!booking_date) {
+    alert("Please select a target execution date.");
+    return;
+  }
+
+  const isConflicting = bookings.some(b => 
+    b.resource_name === resource_name && 
+    b.booking_date === booking_date && 
+    b.slot === slot
+  );
+
+  if (isConflicting) {
+    alert(`Conflict Detected! ${resource_name} is already allocated for the "${slot}" slot on ${booking_date}. Please choose a different slot or asset.`);
+    return;
+  }
+
+  const { error } = await supabaseClient.from('BOOKING').insert({
+    user_id: currentUser.id,
+    resource_type,
+    resource_name,
+    booking_date,
+    slot,
+    purpose
+  });
+
+  if (error) {
+    alert("Reservation submission error: " + error.message);
+    return;
+  }
+
+  document.getElementById("rb-purpose").value = "";
+  await loadBookings();
+}
+
+async function removeBooking(id) {
+  if(!confirm("Are you sure you want to cancel this booking reservation?")) return;
+  const { error } = await supabaseClient.from('BOOKING').delete().eq('id', id);
+  if (error) {
+    alert("Failed to drop database reservation row: " + error.message);
+    return;
+  }
+  await loadBookings();
+}
+
+function renderBookings() {
+  const container = document.getElementById("booking-list");
+  const visibleBookings = bookings.filter(b => b.user_id === currentUser.id);
+
+  document.getElementById("stat-active-bookings").textContent = bookings.length;
+
+  if(!visibleBookings.length) {
+    container.innerHTML = `<div class="empty">You have no active equipment or space allocations booked.</div>`;
+    return;
+  }
+
+  container.innerHTML = visibleBookings.map(b => `
+    <div class="ticket" style="--stripe: var(--primary)">
+      <div class="ticket-top">
+        <div>
+          <div class="ticket-id">RESERVATION #${b.id} · Filed ${fmtDate(new Date(b.created_at))}</div>
+          <div class="ticket-title">${escapeHtml(b.resource_name)}</div>
+        </div>
+        <span class="status-pill status-resolved" style="background:rgba(0,51,102,0.1); color:var(--primary);">${escapeHtml(b.resource_type)}</span>
+      </div>
+      <div class="ticket-meta">
+        <span>📅 <b>Date:</b> ${b.booking_date}</span>
+        <span>⏱ <b>Slot:</b> ${escapeHtml(b.slot)}</span>
+      </div>
+      ${b.purpose ? `<div class="ticket-desc" style="margin-top:5px;"><b>Context Note:</b> ${escapeHtml(b.purpose)}</div>` : ''}
+      <div class="ticket-actions">
+        <button style="color:var(--red); border-color:rgba(214,85,59,0.3);" onclick="removeBooking(${b.id})"><i class="fas fa-trash-alt"></i> Cancel Allocation</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+// ---- CANTEEN MANAGEMENT SYSTEM ENGINE ----
+function switchCanteen(canteenId) {
+  currentCanteen = canteenId;
+  
+  document.querySelectorAll('.canteen-nav-btn').forEach(btn => {
+    btn.classList.remove('active');
+    if(btn.getAttribute('onclick').includes(canteenId)) btn.classList.add('active');
+  });
+
+  document.getElementById('canteen-title').textContent = canteenMenus[canteenId].name + " Menu";
+  renderMenu();
+}
+
+function renderMenu() {
+  const container = document.getElementById('menu-container');
+  const items = canteenMenus[currentCanteen].items;
+
+  container.innerHTML = items.map(item => `
+    <div class="menu-card">
+      <div>
+        <div class="menu-card-type ${item.type}"></div>
+        <div class="menu-card-title">${escapeHtml(item.name)}</div>
+        <div class="menu-card-price">₹${item.price}</div>
+      </div>
+      <button class="submit" style="padding:6px; font-size:12px; margin-top:0;" onclick="addToCart('${item.id}', '${escapeHtml(item.name)}', ${item.price})">Add to Order</button>
+    </div>
+  `).join("");
+}
+
+function addToCart(id, name, price) {
+  if (shoppingCart[id]) {
+    shoppingCart[id].qty++;
+  } else {
+    shoppingCart[id] = { name, price, qty: 1 };
+  }
+  renderCart();
+}
+
+function updateCartQty(id, delta) {
+  if (!shoppingCart[id]) return;
+  shoppingCart[id].qty += delta;
+  if (shoppingCart[id].qty <= 0) {
+    delete shoppingCart[id];
+  }
+  renderCart();
+}
+
+function renderCart() {
+  const container = document.getElementById('cart-container');
+  const summary = document.getElementById('cart-summary');
+  const totalLabel = document.getElementById('cart-total');
+  
+  const keys = Object.keys(shoppingCart);
+  if (!keys.length) {
+    container.innerHTML = `<div class="empty" style="padding:20px 0;">Cart is empty. Select tasty items!</div>`;
+    summary.style.display = "none";
+    return;
+  }
+
+  let total = 0;
+  container.innerHTML = keys.map(id => {
+    const item = shoppingCart[id];
+    const itemTotal = item.price * item.qty;
+    total += itemTotal;
+    return `
+      <div class="cart-item">
+        <div>
+          <div style="font-weight:600;">${item.name}</div>
+          <div style="font-size:11px; color:var(--text-muted);">₹${item.price} × ${item.qty}</div>
+        </div>
+        <div class="cart-qty-ctrl">
+          <button onclick="updateCartQty('${id}', -1)">-</button>
+          <span style="font-family:'JetBrains Mono', monospace; font-weight:600;">${item.qty}</span>
+          <button onclick="updateCartQty('${id}', 1)">+</button>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  totalLabel.textContent = "₹" + total;
+  summary.style.display = "block";
+}
+
+async function checkoutCart() {
+  const keys = Object.keys(shoppingCart);
+  if (!keys.length) return;
+
+  let totalAmount = 0;
+  keys.forEach(id => {
+    totalAmount += shoppingCart[id].price * shoppingCart[id].qty;
+  });
+
+  const canteenData = canteenMenus[currentCanteen];
+
+  const { data, error } = await supabaseClient
+    .from('FOOD_ORDER')
+    .insert([
+      {
+        user_id: currentUser ? currentUser.id : null, 
+        canteen_id: canteenData.db_id,
+        total_amount: totalAmount,
+        status: 'Pending',
+        pickup_time: new Date(Date.now() + 20 * 60 * 1000).toISOString()
+      }
+    ])
+    .select();
+
+  if (error) {
+    alert("Food Court checkout process failed: " + error.message);
+    return;
+  }
+
+  alert(`Pre-Order Token generated successfully inside Supabase! (Order ID: #${data[0].id}). Please collect your items at the digital checkout desk in 20 minutes.`);
+  shoppingCart = {};
+  renderCart();
+}
+
+// ---- HOSTEL WORKFLOW SUITE OPERATIONS ----
+function switchHostelRole(roleName) {
+  document.querySelectorAll('.hostel-role-btn').forEach(b => b.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  
+  document.querySelectorAll('.hostel-sub-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(`hostel-${roleName}`).classList.add('active');
+  
+  syncHostelPipeline();
+}
+
+async function syncHostelPipeline() {
+  await loadHostelNotices();
+  await loadHostelVisitors();
+  renderHostelComplaints();
+}
+
+async function loadHostelNotices() {
+  const { data, error } = await supabaseClient.from('HOSTEL_NOTICE').select('*').order('created_at', { ascending: false }).limit(1);
+  const container = document.getElementById('hostel-notice-container');
+  if(!error && data && data.length > 0) {
+    container.innerHTML = `
+      <div class="notice-banner">
+        <i class="fas fa-bullhorn"></i> <strong>Hostel Master Notice:</strong> ${escapeHtml(data[0].title)} — ${escapeHtml(data[0].message)}
+      </div>
+    `;
+  } else {
+    container.innerHTML = '';
+  }
+}
+
+async function submitWardenNotice() {
+  const title = document.getElementById('h-n-title').value.trim();
+  const msg = document.getElementById('h-n-msg').value.trim();
+  if(!title || !msg) return alert("Write operational notice values.");
+
+  const { error } = await supabaseClient.from('HOSTEL_NOTICE').insert({ title, message: msg });
+  if(!error) {
+    clearInputs(['h-n-title', 'h-n-msg']);
+    await loadHostelNotices();
+  }
+}
+
+async function submitHostelComplaint() {
+  const room = document.getElementById('h-r-room').value.trim();
+  const cat = document.getElementById('h-r-category').value;
+  const desc = document.getElementById('h-r-desc').value.trim();
+
+  if(!room || !desc) return alert("Fill in room identification parameters.");
+
+  const { error } = await supabaseClient.from('TICKET').insert({
+    title: `Hostel Maintenance: ${room}`,
+    category: "Hostel",
+    location: room,
+    description: `[${cat}] — ${desc}`,
+    status: "Open",
+    priority: "Normal",
+    user_id: currentUser.id
+  });
+
+  if(!error) {
+    clearInputs(['h-r-room', 'h-r-desc']);
+    await loadTickets();
+  }
+}
+
+function renderHostelComplaints() {
+  const residentContainer = document.getElementById('hostel-issues-list');
+  const wardenContainer = document.getElementById('hostel-warden-complaints-list');
+  
+  const allHostel = tickets.filter(t => t.category === "Hostel");
+  const mine = allHostel.filter(t => t.user_id === currentUser.id);
+
+  document.getElementById('h-w-stat-complaints').textContent = allHostel.filter(c => c.status !== 'Resolved').length;
+
+  // Resident View
+  if(!mine.length) {
+    residentContainer.innerHTML = `<div class="empty">No active room complaints logged.</div>`;
+  } else {
+    residentContainer.innerHTML = mine.map(c => `
+      <div class="data-item" style="--stripe: ${c.status === 'Open' ? 'var(--red)' : 'var(--green)'}">
+        <span class="status-badge ${c.status === 'Open' ? 'badge-warn' : 'badge-success'}">${c.status}</span>
+        <div class="data-title">${escapeHtml(c.title)}</div>
+        <div style="font-size:13px; color:var(--ink);">${escapeHtml(c.description)}</div>
+      </div>
+    `).join("");
+  }
+
+  // Warden View
+  if(!allHostel.length) {
+    wardenContainer.innerHTML = `<div class="empty">Pipeline clear. No hostel complaints.</div>`;
+  } else {
+    wardenContainer.innerHTML = allHostel.map(c => `
+      <div class="data-item" style="--stripe: var(--navy)">
+        <span class="status-badge ${c.status === 'Open' ? 'badge-warn' : 'badge-success'}">${c.status}</span>
+        <div class="data-title">${escapeHtml(c.title)}</div>
+        <div style="font-size:13px; margin-bottom:8px;">${escapeHtml(c.description)}</div>
+        ${c.status === 'Open' ? `<div class="gate-actions"><button onclick="updateHostelTicketStatus(${c.id}, 'Resolved')">Mark Resolved</button></div>` : ''}
+      </div>
+    `).join("");
+  }
+}
+
+async function updateHostelTicketStatus(id, nextStatus) {
+  const { error } = await supabaseClient.from('TICKET').update({ status: nextStatus }).eq('id', id);
+  if(!error) await loadTickets();
+}
+
+async function loadHostelVisitors() {
+  const { data, error } = await supabaseClient.from('HOSTEL_VISITOR').select('*').order('visit_date', { ascending: true });
+  if (!error && data) {
+    localVisitorsCache = data;
+    renderResidentVisitors();
+    renderSecurityGateView();
+    document.getElementById('h-w-stat-guests').textContent = localVisitorsCache.filter(v => v.status === 'Checked In').length;
+  }
+}
+
+async function submitVisitorPass() {
+  const name = document.getElementById('h-v-name').value.trim();
+  const rel = document.getElementById('h-v-rel').value.trim();
+  const date = document.getElementById('h-v-date').value;
+
+  if(!name || !date) return alert("Provide legal name and date metrics.");
+
+  const { error } = await supabaseClient.from('HOSTEL_VISITOR').insert({
+    user_id: currentUser.id,
+    visitor_name: name,
+    relation: rel,
+    visit_date: date,
+    status: "Pre-Registered"
+  });
+
+  if(!error) {
+    clearInputs(['h-v-name', 'h-v-rel', 'h-v-date']);
+    await loadHostelVisitors();
+  }
+}
+
+function renderResidentVisitors() {
+  const container = document.getElementById('hostel-visitors-list');
+  const mine = localVisitorsCache.filter(v => v.user_id === currentUser.id);
+
+  if(!mine.length) {
+    container.innerHTML = `<div class="empty">No upcoming guests registered.</div>`;
+    return;
+  }
+
+  container.innerHTML = mine.map(v => `
+    <div class="data-item" style="--stripe: var(--amber)">
+      <span class="status-badge badge-warn">${v.status}</span>
+      <div class="data-title">${escapeHtml(v.visitor_name)} (${escapeHtml(v.relation)})</div>
+      <div class="data-meta">Arrival: ${v.visit_date}</div>
+    </div>
+  `).join("");
+}
+
+function renderSecurityGateView() {
+  const container = document.getElementById('hostel-security-gate-list');
+  const query = document.getElementById('h-gate-search').value.toLowerCase();
+  
+  let matches = localVisitorsCache.filter(v => v.status !== 'Checked Out');
+  if(query) {
+    matches = matches.filter(v => v.visitor_name.toLowerCase().includes(query));
+  }
+
+  if(!matches.length) {
+    container.innerHTML = `<div class="empty">No tracking records or clearances discovered.</div>`;
+    return;
+  }
+
+  container.innerHTML = matches.map(v => `
+    <div class="data-item" style="--stripe: ${v.status === 'Checked In' ? 'var(--red)' : 'var(--green)'}">
+      <span class="status-badge ${v.status === 'Checked In' ? 'badge-danger' : 'badge-success'}">${v.status}</span>
+      <div class="data-title">${escapeHtml(v.visitor_name)}</div>
+      <div class="data-meta">Relation: ${escapeHtml(v.relation)} | Expected: ${v.visit_date}</div>
+      <div class="gate-actions">
+        ${v.status === 'Pre-Registered' ? `<button style="background:var(--green); color:#fff;" onclick="punchGateStatus(${v.id}, 'Checked In')">Log Entry</button>` : ''}
+        ${v.status === 'Checked In' ? `<button style="background:var(--red); color:#fff;" onclick="punchGateStatus(${v.id}, 'Checked Out')">Log Exit</button>` : ''}
+      </div>
+    </div>
+  `).join("");
+}
+
+async function punchGateStatus(id, newStatus) {
+  const updatePayload = { status: newStatus };
+  const nowStr = new Date().toISOString();
+  
+  if(newStatus === 'Checked In') updatePayload.check_in_time = nowStr;
+  if(newStatus === 'Checked Out') updatePayload.check_out_time = nowStr;
+
+  const { error } = await supabaseClient.from('HOSTEL_VISITOR').update(updatePayload).eq('id', id);
+  if(!error) await loadHostelVisitors();
+}
+
+// ---- GENERAL COMPLAINTS TRACKER OPERATIONS ----
+function fmtDate(d){
+  return d.toLocaleDateString(undefined, {month:'short', day:'numeric'});
+}
+function daysOpen(d){
+  const diff = Math.floor((new Date() - d) / (1000*60*60*24));
+  return diff === 0 ? "today" : diff + "d open";
+}
+function statusClass(s){
+  if(s==="Open") return "status-open";
+  if(s==="In Progress") return "status-progress";
+  return "status-resolved";
+}
+  
+function stripeColor(s){
+  if(s==="Open") return "var(--red)";
+  if(s==="In Progress") return "var(--amber)";
+  return "var(--green)";
+}
+
+function departmentFor(category){
+  const map = {
+    "Electrical":"Electrical Maintenance",
+    "Water Leakage":"Plumbing & Water Works",
+    "Furniture":"Carpentry / Furniture",
+    "Wi-Fi / Internet":"IT & Networks",
+    "Cleanliness":"Housekeeping",
+    "Hostel":"Hostel Warden Office",
+    "Classroom":"Academic Facilities",
+    "Laboratory":"Lab In-Charge",
+    "Sports Facility":"Sports Department",
+    "Other":"General Maintenance"
+  };
+  return map[category] || "General Maintenance";
+}
+
+function etaFor(priority){
+  if(priority==="High") return "within 24 hrs";
+  if(priority==="Low") return "within 5 days";
+  return "within 2-3 days";
+}
+
+const STAGES = ["Submitted","Assigned","In Progress","Resolved"];
+function stageIndex(status){
+  if(status==="Open") return 0;
+  if(status==="In Progress") return 2;
+  return 3;
+}
+
+function timelineHtml(status){
+  const idx = stageIndex(status);
+  return `
+    <div style="display:flex; align-items:center; margin:10px 0 4px;">
+      ${STAGES.map((s,i)=> `
+        <div style="flex:1; text-align:center;">
+          <div style="width:10px; height:10px; border-radius:50%; margin:0 auto 4px;
+            background:${i<=idx ? 'var(--green)' : 'var(--line)'};"></div>
+          <div style="font-size:9.5px; color:${i<=idx ? '#374151' : '#B0B6BE'};">${s}</div>
+        </div>
+        ${i<STAGES.length-1 ? `<div style="flex:1.4; height:2px; margin-bottom:16px;
+            background:${i<idx ? 'var(--green)' : 'var(--line)'};"></div>` : ""}
+      `).join("")}
+    </div>
+  `;
+}
+
+document.getElementById('f-location').addEventListener('change', function(){
+  const otherInput = document.getElementById('f-location-other');
+  if(this.value === "Other"){
+    otherInput.style.display = "block";
+    otherInput.focus();
+  } else {
+    otherInput.style.display = "none";
+    otherInput.value = "";
+  }
+});
+
+document.getElementById('f-category').addEventListener('change', function(){
+  const otherInput = document.getElementById('f-category-other');
+  if(this.value === "Other"){
+    otherInput.style.display = "block";
+    otherInput.focus();
+  } else {
+    otherInput.style.display = "none";
+    otherInput.value = "";
+  }
+});
+
+function clearForm(){
+  document.getElementById('f-title').value = "";
+  document.getElementById('f-category').value = "Electrical";
+  document.getElementById('f-category-other').value = "";
+  document.getElementById('f-category-other').style.display = "none";
+  document.getElementById('f-priority').value = "Normal";
+  document.getElementById('f-location').value = "";
+  document.getElementById('f-location-other').value = "";
+  document.getElementById('f-location-other').style.display = "none";
+  document.getElementById('f-desc').value = "";
+}
+
+document.querySelectorAll('#theme-toggle button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#theme-toggle button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.body.classList.toggle('dark', btn.dataset.theme === 'dark');
+  });
+});
+
+async function submitTicket(){
+  const title = document.getElementById('f-title').value.trim();
+  const desc = document.getElementById('f-desc').value.trim();
+  const locationSelect = document.getElementById('f-location');
+  const locationOther = document.getElementById('f-location-other').value.trim();
+  const location = locationSelect.value === "Other" ? locationOther : locationSelect.value;
+
+  const categorySelect = document.getElementById('f-category');
+  const categoryOther = document.getElementById('f-category-other').value.trim();
+  const category = categorySelect.value === "Other" ? categoryOther : categorySelect.value;
+
+  if(!title || !location){
+    alert("Please add at least a title and location.");
+    return;
+  }
+
+  const { error } = await supabaseClient.from('TICKET').insert({
+    title,
+    category,
+    priority: document.getElementById('f-priority').value,
+    location,
+    description: desc,
+    status: "Open",
+    user_id: currentUser.id
+  });
+
+  if(error){
+    alert("Couldn't save ticket: " + error.message);
+    return;
+  }
+
+  clearForm();
+  await loadTickets();
+}
+
+function ticketCard(t, showActions){
+  return `
+    <div class="ticket" style="--stripe:${stripeColor(t.status)}">
+      <div class="ticket-top">
+        <div>
+          <div class="ticket-id">TICKET #${t.id} · ${fmtDate(new Date(t.created_at))}</div>
+          <div class="ticket-title">${escapeHtml(t.title)}</div>
+        </div>
+        <span class="status-pill ${statusClass(t.status)}">${t.status}</span>
+      </div>
+      <div class="ticket-meta">
+        <span>📍 ${escapeHtml(t.location)}</span>
+        <span>🏷 ${t.category}</span>
+        <span>⚑ ${t.priority}</span>
+        <span>⏱ ${daysOpen(new Date(t.created_at))}</span>
+      </div>
+      <div class="ticket-meta" style="margin-bottom:2px;">
+        <span>🛠 ${departmentFor(t.category)}</span>
+        <span>📅 ETA ${etaFor(t.priority)}</span>
+      </div>
+      ${timelineHtml(t.status)}
+      ${t.description ? `<div class="ticket-desc">${escapeHtml(t.description)}</div>` : ""}
+      ${showActions ? `
+      <div class="ticket-actions">
+        ${t.status!=="Open" ? `<button onclick="setStatus(${t.id},'Open')">Mark Open</button>` : ""}
+        ${t.status!=="In Progress" ? `<button onclick="setStatus(${t.id},'In Progress')">Mark In Progress</button>` : ""}
+        ${t.status!=="Resolved" ? `<button onclick="setStatus(${t.id},'Resolved')">Mark Resolved</button>` : ""}
+      </div>` : ""}
+    </div>
+  `;
+}
+
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.innerText = str || '';
+  return d.innerHTML;
+}
+
+function clearInputs(idArray) {
+  idArray.forEach(id => document.getElementById(id).value = '');
+}
+
+async function setStatus(id, status){
+  const { error } = await supabaseClient
+    .from('TICKET')
+    .update({ status })
+    .eq('id', id);
+
+  if(error){
+    alert("Couldn't update status: " + error.message);
+    return;
+  }
+  await loadTickets();
+}
+
+async function loadTickets(){
+  const { data, error } = await supabaseClient
+    .from('TICKET')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if(error){
+    document.getElementById('student-list').innerHTML =
+      `<div class="empty">Couldn't load tickets: ${escapeHtml(error.message)}</div>`;
+    return;
+  }
+  tickets = data;
+  renderTickets();
+  if(currentUser) renderHostelComplaints();
+}
+
+let currentFilter = "all";
+let trackId = null;
+
+function trackTicket(){
+  const val = document.getElementById('f-track').value.trim();
+  trackId = val ? val.replace(/\D/g,'') : null;
+  renderTickets();
+}
+function clearTrack(){
+  trackId = null;
+  document.getElementById('f-track').value = "";
+  renderTickets();
+}
+
+function renderTickets(){
+  const studentList = document.getElementById('student-list');
+  let visible = tickets.filter(t => t.user_id === currentUser.id && t.category !== "Hostel");
+  if(trackId){
+    visible = visible.filter(t=> String(t.id) === trackId);
+  }
+  studentList.innerHTML = visible.length
+    ? visible.map(t=>ticketCard(t,false)).join("")
+    : (trackId
+        ? `<div class="empty">No ticket found with number ${escapeHtml(trackId)}.</div>`
+        : `<div class="empty">No reports yet. File one above.</div>`);
+
+  const staffList = document.getElementById('staff-list');
+  const filtered = currentFilter==="all" ? tickets : tickets.filter(t=>t.status===currentFilter);
+  staffList.innerHTML = filtered.length
+    ? filtered.map(t=>ticketCard(t,true)).join("")
+    : `<div class="empty">No tickets in this view.</div>`;
+}
+
+// Layout Routers
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    document.getElementById(tab.dataset.view).classList.add('active');
+    
+    if(tab.dataset.view === 'hostel') {
+      syncHostelPipeline();
+    }
+  });
+});
+
+document.querySelectorAll('#staff-filters button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#staff-filters button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.dataset.f;
+    renderTickets();
+  });
+});
+
+checkExistingSession();
+</script>
+</body>
+</html>
